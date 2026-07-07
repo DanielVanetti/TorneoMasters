@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel — Admin Torneo Máster</title>
+<link rel="stylesheet" href="./css/admin.css">
+</head>
+<body data-page="dashboard">
+  <header class="admin-header">
+    <a class="brand" href="./dashboard.html">Admin · Torneo Máster</a>
+    <nav>
+      <a href="./dashboard.html" data-nav="dashboard">Inicio</a>
+      <a href="./equipos.html" data-nav="equipos">Equipos</a>
+      <a href="./jugadores.html" data-nav="jugadores">Jugadores</a>
+      <a href="./partidos.html" data-nav="partidos">Partidos</a>
+      <a href="./galeria.html" data-nav="galeria">Galería</a>
+      <a href="./importar-excel.html" data-nav="importar">Importar</a>
+    </nav>
+    <button class="logout" id="btn-logout">Salir</button>
+  </header>
+
+  <main class="admin-main">
+    <h1>Panel de administración</h1>
+    <p class="subtitle">Cargá resultados, jugadores, equipos y fotos del torneo.</p>
+
+    <div class="panel" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center">
+      <div><div style="font-size:30px;font-weight:800;color:var(--teal-dark)" id="stat-equipos">—</div><div style="color:rgba(36,27,20,0.55);font-size:13px;text-transform:uppercase">Equipos</div></div>
+      <div><div style="font-size:30px;font-weight:800;color:var(--teal-dark)" id="stat-jugados">—</div><div style="color:rgba(36,27,20,0.55);font-size:13px;text-transform:uppercase">Partidos jugados</div></div>
+      <div><div style="font-size:30px;font-weight:800;color:var(--teal-dark)" id="stat-programados">—</div><div style="color:rgba(36,27,20,0.55);font-size:13px;text-transform:uppercase">Partidos por jugar</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Accesos rápidos</h2>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn small" href="./partidos.html">Cargar resultado</a>
+        <a class="btn small secondary" href="./equipos.html">Agregar equipo</a>
+        <a class="btn small secondary" href="./jugadores.html">Agregar jugador</a>
+        <a class="btn small secondary" href="./galeria.html">Subir fotos</a>
+        <a class="btn small secondary" href="./importar-excel.html">Carga masiva</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/supabase-config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="./js/admin-common.js"></script>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>

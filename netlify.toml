@@ -1,0 +1,15 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Cabeceras defensivas para /admin/: no evitan que alguien acceda si conoce
+# la URL (eso lo hace Supabase Auth adentro de cada Netlify Function), pero
+# sí evitan que buscadores o proxies cacheen esas páginas.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipos — Admin Torneo Máster</title>
+<link rel="stylesheet" href="./css/admin.css">
+</head>
+<body data-page="equipos">
+  <header class="admin-header">
+    <a class="brand" href="./dashboard.html">Admin · Torneo Máster</a>
+    <nav>
+      <a href="./dashboard.html" data-nav="dashboard">Inicio</a>
+      <a href="./equipos.html" data-nav="equipos">Equipos</a>
+      <a href="./jugadores.html" data-nav="jugadores">Jugadores</a>
+      <a href="./partidos.html" data-nav="partidos">Partidos</a>
+      <a href="./galeria.html" data-nav="galeria">Galería</a>
+      <a href="./importar-excel.html" data-nav="importar">Importar</a>
+    </nav>
+    <button class="logout" id="btn-logout">Salir</button>
+  </header>
+
+  <main class="admin-main">
+    <h1>Equipos</h1>
+    <p class="subtitle">Agregá o editá los equipos del torneo.</p>
+
+    <div class="panel">
+      <h2 id="form-titulo">Nuevo equipo</h2>
+      <div id="mensaje" class="mensaje"></div>
+      <form id="form-equipo">
+        <input type="hidden" id="equipo-id">
+        <div class="form-row">
+          <div>
+            <label for="nombre">Nombre del equipo</label>
+            <input type="text" id="nombre" required>
+          </div>
+          <div>
+            <label for="ciudad">Ciudad / pueblo</label>
+            <input type="text" id="ciudad">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="color">Color del equipo</label>
+            <input type="color" id="color" value="#0E5C6B" style="height:44px;padding:4px">
+          </div>
+          <div>
+            <label for="cancha_local">Cancha local</label>
+            <input type="text" id="cancha_local">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="delegado">Delegado</label>
+            <input type="text" id="delegado">
+          </div>
+          <div>
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono">
+          </div>
+        </div>
+        <label for="email">Correo</label>
+        <input type="email" id="email">
+
+        <label for="logo">Logo (opcional)</label>
+        <input type="file" id="logo" accept="image/*">
+        <img id="logo-preview" class="foto-preview" style="display:none">
+
+        <div style="display:flex;gap:10px">
+          <button type="submit" class="btn">Guardar equipo</button>
+          <button type="button" class="btn secondary" id="btn-cancelar" style="display:none">Cancelar edición</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Equipos existentes</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Equipo</th><th>Ciudad</th><th>Delegado</th><th></th></tr></thead>
+          <tbody id="tabla-equipos"><tr><td colspan="4">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/supabase-config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="./js/admin-common.js"></script>
+  <script src="./js/equipos.js"></script>
+</body>
+</html>
