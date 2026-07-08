@@ -2,6 +2,14 @@
   publish = "."
   functions = "netlify/functions"
 
+[build.environment]
+  # js/supabase-config.js contiene a propósito la URL y la anon key de
+  # Supabase (son públicas, pensadas para vivir en el navegador) — el
+  # escáner de secretos de Netlify las marca como "filtradas" porque
+  # coinciden con las env vars SUPABASE_URL/SUPABASE_ANON_KEY. La
+  # service_role key nunca está en ese archivo, así que sigue vigilada.
+  SECRETS_SCAN_OMIT_PATHS = "js/supabase-config.js"
+
 [functions]
   node_bundler = "esbuild"
 
