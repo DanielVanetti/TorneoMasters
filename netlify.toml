@@ -13,6 +13,15 @@
 [functions]
   node_bundler = "esbuild"
 
+# Este sitio depende de nombres de archivo exactos (Nav.dc.html, etc.)
+# para las peticiones fetch() del framework de plantillas — "Pretty URLs"
+# de Netlify redirige y reescribe esos nombres (a /nav.dc en minúsculas),
+# así que lo desactivamos explícitamente.
+[build.processing]
+  skip_processing = false
+[build.processing.html]
+  pretty_urls = false
+
 # Cabeceras defensivas para /admin/: no evitan que alguien acceda si conoce
 # la URL (eso lo hace Supabase Auth adentro de cada Netlify Function), pero
 # sí evitan que buscadores o proxies cacheen esas páginas.
