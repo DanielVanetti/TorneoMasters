@@ -78,23 +78,12 @@
         return (data || []).map((p) => ({ team: p.equipo_id, name: p.nombre, number: p.numero, position: p.posicion, fotoUrl: p.foto_url }));
       },
 
-      async getFinanzas() {
-        const [ingresosRes, gastosRes, aportesRes] = await Promise.all([
-          client.from("finanzas_ingresos").select("concepto, monto").order("fecha", { ascending: true }),
-          client.from("finanzas_gastos").select("concepto, monto").order("fecha", { ascending: true }),
-          client.from("aportes_equipo").select("inscripcion, cuotas_al_dia, cuotas_total, aporte_total, equipos(nombre)"),
-        ]);
-        if (ingresosRes.error) console.error("getFinanzas/ingresos:", ingresosRes.error.message);
-        if (gastosRes.error) console.error("getFinanzas/gastos:", gastosRes.error.message);
-        if (aportesRes.error) console.error("getFinanzas/aportes:", aportesRes.error.message);
-        return {
-          ingresos: (ingresosRes.data || []).map((i) => ({ concepto: i.concepto, monto: Number(i.monto) })),
-          gastos: (gastosRes.data || []).map((g) => ({ concepto: g.concepto, monto: Number(g.monto) })),
-          equipos: (aportesRes.data || []).map((a) => ({
-            team: a.equipos ? a.equipos.nombre : "",
-            inscripcion: a.inscripcion, cuotasAlDia: a.cuotas_al_dia, cuotasTotal: a.cuotas_total, aporteTotal: Number(a.aporte_total),
-          })),
-        };
+      async getContenido() {
+        const { data, error } = await client.from("contenido_paginas").select("clave, titulo, contenido");
+        if (error) { console.error("getContenido:", error.message); return { requisitos: null, reglamento: null }; }
+        const porClave = {};
+        (data || []).forEach((row) => { porClave[row.clave] = row; });
+        return { requisitos: porClave.requisitos || null, reglamento: porClave.reglamento || null };
       },
 
       async getGaleria() {
@@ -113,7 +102,7 @@
         client: null,
         getPosiciones: vacio, getGoleadores: vacio, getProximosPartidos: vacio,
         getJugadores: vacio, getGaleria: vacio,
-        getFinanzas: () => { vacio(); return Promise.resolve({ ingresos: [], gastos: [], equipos: [] }); },
+        getContenido: () => { vacio(); return Promise.resolve({ requisitos: null, reglamento: null }); },
       };
     }
     return loadScript(SDK_URL).then(function () {

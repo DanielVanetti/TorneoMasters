@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Galería — Admin Torneo Máster</title>
+<title>Reglamento — Admin Torneo Máster</title>
 <link rel="stylesheet" href="./css/admin.css">
 </head>
-<body data-page="galeria">
+<body data-page="reglamento">
   <header class="admin-header">
     <a class="brand" href="./dashboard.html">Admin · Torneo Máster</a>
     <nav>
@@ -22,36 +22,32 @@
   </header>
 
   <main class="admin-main">
-    <h1>Galería</h1>
-    <p class="subtitle">Subí fotos de partidos y actividades, una por una.</p>
+    <h1>Reglamento</h1>
+    <p class="subtitle">Este texto se publica tal cual en la página pública de Reglamento.</p>
+    <div id="mensaje" class="mensaje"></div>
 
     <div class="panel">
-      <h2>Subir foto</h2>
-      <div id="mensaje" class="mensaje"></div>
-      <form id="form-foto">
-        <label for="foto">Foto</label>
-        <input type="file" id="foto" accept="image/*" required>
-        <label for="titulo">Título</label>
-        <input type="text" id="titulo" placeholder="Ej: Jornada 3 - Sabaneros vs Costeños">
-        <label for="descripcion">Descripción (opcional)</label>
-        <textarea id="descripcion"></textarea>
-        <label for="partido_id">Partido relacionado (opcional)</label>
-        <select id="partido_id"><option value="">Ninguno / actividad general</option></select>
-        <button type="submit" class="btn">Subir foto</button>
-      </form>
+      <h2>Requisitos para participar</h2>
+      <label for="req-titulo">Título</label>
+      <input type="text" id="req-titulo">
+      <label for="req-contenido">Contenido</label>
+      <textarea id="req-contenido" style="min-height:220px"></textarea>
+      <button type="button" class="btn" id="btn-guardar-requisitos">Guardar requisitos</button>
     </div>
 
     <div class="panel">
-      <h2>Fotos publicadas</h2>
-      <div id="grid-fotos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px">
-        <p>Cargando…</p>
-      </div>
+      <h2>Reglamento del torneo</h2>
+      <label for="reg-titulo">Título</label>
+      <input type="text" id="reg-titulo">
+      <label for="reg-contenido">Contenido</label>
+      <textarea id="reg-contenido" style="min-height:280px"></textarea>
+      <button type="button" class="btn" id="btn-guardar-reglamento">Guardar reglamento</button>
     </div>
   </main>
 
   <script src="../js/supabase-config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="./js/admin-common.js"></script>
-  <script src="./js/galeria.js"></script>
+  <script src="./js/reglamento.js"></script>
 </body>
 </html>

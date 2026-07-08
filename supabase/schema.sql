@@ -82,31 +82,15 @@ create table imagenes (
 );
 
 -- ------------------------------------------------------------
--- FINANZAS — no estaba en el plan original, se agrega para que
--- la página "Transparencia financiera" del sitio tenga datos reales.
+-- CONTENIDO DE PÁGINAS (Reglamento / Requisitos para participar)
+-- Una fila por sección, editable desde el admin. El contenido se
+-- guarda como texto plano con saltos de línea.
 -- ------------------------------------------------------------
-create table finanzas_ingresos (
-  id        uuid primary key default gen_random_uuid(),
-  concepto  text not null,
-  monto     numeric not null default 0,
-  fecha     date default current_date,
-  creado_en timestamptz default now()
-);
-
-create table finanzas_gastos (
-  id        uuid primary key default gen_random_uuid(),
-  concepto  text not null,
-  monto     numeric not null default 0,
-  fecha     date default current_date,
-  creado_en timestamptz default now()
-);
-
-create table aportes_equipo (
-  equipo_id       uuid primary key references equipos(id) on delete cascade,
-  inscripcion     text default 'Pendiente' check (inscripcion in ('Al día','Pendiente')),
-  cuotas_al_dia   int default 0,
-  cuotas_total    int default 0,
-  aporte_total    numeric default 0
+create table contenido_paginas (
+  clave           text primary key check (clave in ('requisitos','reglamento')),
+  titulo          text,
+  contenido       text,
+  actualizado_en  timestamptz default now()
 );
 
 -- No hace falta tabla "admins" con rol/equipo_id: los dos usuarios
@@ -186,18 +170,14 @@ alter table jugadores enable row level security;
 alter table partidos enable row level security;
 alter table goles enable row level security;
 alter table imagenes enable row level security;
-alter table finanzas_ingresos enable row level security;
-alter table finanzas_gastos enable row level security;
-alter table aportes_equipo enable row level security;
+alter table contenido_paginas enable row level security;
 
 create policy "lectura publica" on equipos for select using (true);
 create policy "lectura publica" on jugadores for select using (true);
 create policy "lectura publica" on partidos for select using (true);
 create policy "lectura publica" on goles for select using (true);
 create policy "lectura publica" on imagenes for select using (true);
-create policy "lectura publica" on finanzas_ingresos for select using (true);
-create policy "lectura publica" on finanzas_gastos for select using (true);
-create policy "lectura publica" on aportes_equipo for select using (true);
+create policy "lectura publica" on contenido_paginas for select using (true);
 
 -- ============================================================
 -- STORAGE — bucket público para las fotos de la galería
@@ -209,6 +189,15 @@ on conflict (id) do nothing;
 create policy "lectura publica de fotos"
   on storage.objects for select
   using (bucket_id = 'fotos-torneo');
+
+-- ============================================================
+-- Filas iniciales de contenido_paginas, para que el admin tenga
+-- algo que editar desde el primer momento.
+-- ============================================================
+insert into contenido_paginas (clave, titulo, contenido) values
+  ('requisitos', 'Requisitos para participar', 'Editá este texto desde el panel admin → Reglamento.'),
+  ('reglamento', 'Reglamento del torneo', 'Editá este texto desde el panel admin → Reglamento.')
+on conflict (clave) do nothing;
 
 -- ============================================================
 -- DATOS DE EJEMPLO (opcional) — comentado.
