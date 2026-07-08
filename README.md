@@ -11,6 +11,7 @@ Sitio web del torneo: páginas públicas (posiciones, goleadores, calendario, eq
 - [Cómo está armado](#cómo-está-armado)
 - [Estructura de archivos](#estructura-de-archivos)
 - [Puesta en marcha desde cero](#puesta-en-marcha-desde-cero)
+- [Datos de prueba (seeder)](#datos-de-prueba-seeder)
 - [Uso del día a día (contenido)](#uso-del-día-a-día-contenido)
 - [Seguridad](#seguridad)
 - [Netlify Functions](#netlify-functions-netlifyfunctions)
@@ -71,7 +72,8 @@ Navegador (/admin/)  ──escritura─▶ Netlify Function ──▶ Supabase (
 ├── netlify/functions/            → backend (ver sección dedicada)
 ├── supabase/
 │   ├── schema.sql                → esquema completo, para un proyecto Supabase nuevo
-│   └── migracion-2-reglamento.sql→ migración aplicada sobre el proyecto actual
+│   ├── migracion-2-reglamento.sql→ migración aplicada sobre el proyecto actual
+│   └── seed-prueba.sql           → datos de prueba (ver sección dedicada)
 ├── netlify.toml                  → config de Netlify (publish dir, functions, headers)
 └── package.json                  → dependencia: @supabase/supabase-js (la usan las Functions)
 ```
@@ -90,6 +92,27 @@ Si algún día hay que levantar esto en otro proyecto de Supabase / otro sitio d
    - `SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` ← **esta es secreta**, sale de Project Settings → API → `service_role`. Nunca va en el código, solo acá.
 7. **Redeploy** (Deploys → Trigger deploy) para que tome las variables nuevas.
+
+## Datos de prueba (seeder)
+
+`supabase/seed-prueba.sql` carga datos ficticios pero completos para poder ver el sitio funcionando de punta a punta antes de que el admin cargue algo real: 16 equipos, 80 jugadores (5 por equipo), 3 jornadas ya jugadas con goleadores (para que Posiciones y Goleadores tengan algo que mostrar) y 1 jornada programada (para ver el Calendario). Las fechas son relativas a "hoy", así que siempre se ven vigentes sin importar cuándo lo corras.
+
+Cómo usarlo:
+
+1. Supabase → SQL Editor → New query.
+2. Pegar todo el contenido de `supabase/seed-prueba.sql` → Run.
+3. Refrescar el sitio público — ya debería verse todo con datos.
+
+Para borrarlo cuando empiecen a cargar datos reales (sin tocar fotos de galería ni el texto de Reglamento, que viven en otras tablas): descomentá las 4 líneas del bloque `-- LIMPIEZA` al principio del archivo y corré solo esas líneas primero, o simplemente:
+
+```sql
+delete from goles;
+delete from partidos;
+delete from jugadores;
+delete from equipos;
+```
+
+Si lo corrés dos veces sin limpiar antes, los equipos no se duplican (tienen nombre único), pero los jugadores y partidos sí — así que limpiá primero si vas a re-sembrar.
 
 ## Uso del día a día (contenido)
 
