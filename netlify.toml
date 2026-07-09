@@ -1,30 +1,17 @@
-[build]
-  publish = "."
-  functions = "netlify/functions"
+# Config para Next.js en Netlify — el runtime oficial (@netlify/plugin-nextjs)
+# detecta automáticamente rutas, API routes, ISR y no necesita [build.processing]
+# ni [functions] manuales como el sitio estático anterior.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
-  # js/supabase-config.js contiene a propósito la URL y la anon key de
-  # Supabase (son públicas, pensadas para vivir en el navegador) — el
-  # escáner de secretos de Netlify las marca como "filtradas" porque
-  # coinciden con las env vars SUPABASE_URL/SUPABASE_ANON_KEY. La
-  # service_role key nunca está en ese archivo, así que sigue vigilada.
+  # js/supabase-config.js quedó del sitio estático anterior — mientras exista
+  # en el repo, se sigue excluyendo del escáner de secretos (ver README).
   SECRETS_SCAN_OMIT_PATHS = "js/supabase-config.js"
 
-[functions]
-  node_bundler = "esbuild"
-
-# Este sitio depende de nombres de archivo exactos (Nav.dc.html, etc.)
-# para las peticiones fetch() del framework de plantillas — "Pretty URLs"
-# de Netlify redirige y reescribe esos nombres (a /nav.dc en minúsculas),
-# así que lo desactivamos explícitamente.
-[build.processing]
-  skip_processing = false
-[build.processing.html]
-  pretty_urls = false
-
-# Cabeceras defensivas para /admin/: no evitan que alguien acceda si conoce
-# la URL (eso lo hace Supabase Auth adentro de cada Netlify Function), pero
-# sí evitan que buscadores o proxies cacheen esas páginas.
+# Cabeceras defensivas para /admin/*: no evitan que alguien acceda si conoce
+# la URL (eso lo hace el middleware + cada Route Handler), pero sí evitan que
+# buscadores o proxies cacheen esas páginas.
 [[headers]]
   for = "/admin/*"
   [headers.values]
