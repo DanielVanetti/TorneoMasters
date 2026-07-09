@@ -6,7 +6,7 @@ const ITEMS = [
   { key: "goleadores", label: "Goleadores", href: "/goleadores" },
   { key: "calendario", label: "Calendario", href: "/calendario" },
   { key: "equipos", label: "Equipos", href: "/equipos" },
-  { key: "galeria", label: "Galería", href: "/galeria" },
+  { key: "actividades", label: "Actividades", href: "/actividades" },
   { key: "reglamento", label: "Reglamento", href: "/reglamento" },
 ] as const;
 
