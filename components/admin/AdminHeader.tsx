@@ -9,7 +9,7 @@ const ITEMS = [
   { key: "equipos", label: "Equipos", href: "/admin/equipos" },
   { key: "jugadores", label: "Jugadores", href: "/admin/jugadores" },
   { key: "partidos", label: "Partidos", href: "/admin/partidos" },
-  { key: "galeria", label: "Galería", href: "/admin/galeria" },
+  { key: "actividades", label: "Actividades", href: "/admin/actividades" },
   { key: "reglamento", label: "Reglamento", href: "/admin/reglamento" },
   { key: "importar", label: "Importar", href: "/admin/importar" },
 ];

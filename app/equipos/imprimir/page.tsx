@@ -19,7 +19,7 @@ export default async function EquiposImprimirPage() {
         <div className="flex justify-end mb-5 print:hidden">
           <PrintButton />
         </div>
-        <EquiposGrid teams={teams} players={players} />
+        <EquiposGrid teams={teams} players={players} interactive={false} />
       </div>
     </>
   );

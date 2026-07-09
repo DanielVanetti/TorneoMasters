@@ -143,20 +143,50 @@ export async function getContenido(): Promise<{ requisitos: Contenido; reglament
 
 export type Foto = { id: string; titulo: string | null; descripcion: string | null; url: string };
 
-export async function getGaleria(): Promise<Foto[]> {
+export type GrupoActividades = {
+  key: string;
+  titulo: string;
+  subtitulo: string;
+  fotos: Foto[];
+};
+
+// Agrupa las fotos por el partido al que están asociadas (o un grupo
+// "general" para las que no tienen partido_id) — cada grupo se muestra
+// como un carrusel propio en la página pública de Actividades.
+export async function getActividades(): Promise<GrupoActividades[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("imagenes")
-    .select("id, titulo, descripcion, url_imagen, subida_en")
+    .select(
+      "id, titulo, descripcion, url_imagen, subida_en, partido_id, partidos(jornada, fecha, equipo_local:equipo_local_id(nombre), equipo_visitante:equipo_visitante_id(nombre))"
+    )
     .order("subida_en", { ascending: false });
   if (error) {
-    console.error("getGaleria:", error.message);
+    console.error("getActividades:", error.message);
     return [];
   }
-  return (data || []).map((f) => ({
-    id: f.id,
-    titulo: f.titulo,
-    descripcion: f.descripcion,
-    url: f.url_imagen,
-  }));
+
+  type Row = {
+    id: string;
+    titulo: string | null;
+    descripcion: string | null;
+    url_imagen: string;
+    subida_en: string;
+    partido_id: string | null;
+    partidos: { jornada: number; fecha: string; equipo_local: { nombre: string } | null; equipo_visitante: { nombre: string } | null } | null;
+  };
+
+  const grupos = new Map<string, GrupoActividades & { orden: string }>();
+  for (const f of (data || []) as unknown as Row[]) {
+    const key = f.partido_id || "general";
+    if (!grupos.has(key)) {
+      const p = f.partidos;
+      const titulo = p ? `Jornada ${p.jornada} · ${p.equipo_local?.nombre || "?"} vs ${p.equipo_visitante?.nombre || "?"}` : "Actividades generales";
+      const subtitulo = p ? formatFecha(p.fecha) : "Fotos del torneo sin partido asociado";
+      grupos.set(key, { key, titulo, subtitulo, fotos: [], orden: f.subida_en });
+    }
+    grupos.get(key)!.fotos.push({ id: f.id, titulo: f.titulo, descripcion: f.descripcion, url: f.url_imagen });
+  }
+
+  return [...grupos.values()].sort((a, b) => (a.orden < b.orden ? 1 : -1));
 }

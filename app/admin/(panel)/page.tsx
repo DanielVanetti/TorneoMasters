@@ -50,7 +50,7 @@ export default function DashboardPage() {
           <Link href="/admin/jugadores" className={`${btnSmallSecondaryCls} px-5.5! py-3! text-[15px]!`}>
             Agregar jugador
           </Link>
-          <Link href="/admin/galeria" className={`${btnSmallSecondaryCls} px-5.5! py-3! text-[15px]!`}>
+          <Link href="/admin/actividades" className={`${btnSmallSecondaryCls} px-5.5! py-3! text-[15px]!`}>
             Subir fotos
           </Link>
           <Link href="/admin/importar" className={`${btnSmallSecondaryCls} px-5.5! py-3! text-[15px]!`}>

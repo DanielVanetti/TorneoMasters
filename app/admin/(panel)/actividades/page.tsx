@@ -9,7 +9,7 @@ import { panelCls, labelCls, inputCls, btnCls, btnDangerCls } from "@/lib/admin-
 type Partido = { id: string; jornada: number; fecha: string; local?: { nombre: string } | null; visitante?: { nombre: string } | null };
 type Foto = { id: string; titulo: string | null; url_imagen: string };
 
-export default function GaleriaAdminPage() {
+export default function ActividadesAdminPage() {
   const [partidos, setPartidos] = useState<Partido[]>([]);
   const [fotos, setFotos] = useState<Foto[] | null>(null);
   const [archivo, setArchivo] = useState<File | null>(null);
@@ -45,7 +45,7 @@ export default function GaleriaAdminPage() {
   }, []);
 
   async function eliminar(f: Foto) {
-    if (!confirm("¿Eliminar esta foto de la galería?")) return;
+    if (!confirm("¿Eliminar esta foto de Actividades?")) return;
     try {
       await llamarFuncion("eliminar-foto", { id: f.id });
       cargarFotos();
@@ -84,8 +84,10 @@ export default function GaleriaAdminPage() {
 
   return (
     <>
-      <h1 className="text-2xl m-0 mb-1.5 text-tms-teal-dark font-bold">Galería</h1>
-      <p className="text-tms-ink/60 m-0 mb-6 text-[15px]">Subí fotos de partidos y actividades, una por una.</p>
+      <h1 className="text-2xl m-0 mb-1.5 text-tms-teal-dark font-bold">Actividades</h1>
+      <p className="text-tms-ink/60 m-0 mb-6 text-[15px]">
+        Subí fotos de partidos y actividades. Las que asociés a un partido aparecen agrupadas en su propio carrusel en la página pública.
+      </p>
 
       <div className={panelCls}>
         <h2 className="text-lg m-0 mb-4 text-tms-teal-dark font-bold">Subir foto</h2>
