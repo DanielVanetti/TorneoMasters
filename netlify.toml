@@ -1,13 +1,23 @@
 # Config para Next.js en Netlify — el runtime oficial (@netlify/plugin-nextjs)
 # detecta automáticamente rutas, API routes, ISR y no necesita [build.processing]
 # ni [functions] manuales como el sitio estático anterior.
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+#
+# publish = ".next" es obligatorio acá: en cuanto este archivo define
+# cualquier otra clave bajo [build] (como [build.environment] más abajo),
+# Netlify deja de auto-detectar el directorio de salida de Next.js y cae al
+# directorio base del repo por defecto — que es exactamente lo que el plugin
+# rechaza ("publish directory cannot be the same as the base directory").
+[build]
+  command = "next build"
+  publish = ".next"
 
 [build.environment]
   # js/supabase-config.js quedó del sitio estático anterior — mientras exista
   # en el repo, se sigue excluyendo del escáner de secretos (ver README).
   SECRETS_SCAN_OMIT_PATHS = "js/supabase-config.js"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 # Cabeceras defensivas para /admin/*: no evitan que alguien acceda si conoce
 # la URL (eso lo hace el middleware + cada Route Handler), pero sí evitan que
