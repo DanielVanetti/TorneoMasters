@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-tms-teal-dark border-t-4 border-tms-gold text-tms-cream font-body">
+    <footer className="mt-auto bg-tms-teal-dark border-t-4 border-tms-gold text-tms-cream font-body">
       <div className="max-w-[1240px] mx-auto grid grid-cols-1 sm:grid-cols-[1.3fr_1fr_1fr] gap-5 sm:gap-8 px-5 sm:px-7 pt-8 pb-6">
         <div>
           <div className="font-display text-xl text-tms-gold tracking-wide">TORNEO MÁSTER SANTA CRUZ</div>
