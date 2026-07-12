@@ -5,6 +5,7 @@ Sitio web del torneo: páginas públicas (posiciones, goleadores, calendario, eq
 - Sitio público: `https://tusitio.netlify.app/`
 - Admin: `https://tusitio.netlify.app/admin/`
 - Repo: https://github.com/DanielVanetti/TorneoMasters
+- Decisiones y pendientes que no se ven en el código: [`NOTAS-TECNICAS.md`](./NOTAS-TECNICAS.md)
 
 ## Índice
 
@@ -53,7 +54,7 @@ Navegador (/admin/)  ──escritura─▶ app/api/*  ──▶ Supabase (servic
 │   │   └── (panel)/              → todo lo protegido por middleware.ts
 │   │       ├── layout.tsx        → header + nav del admin
 │   │       ├── page.tsx          → dashboard
-│   │       ├── equipos/ jugadores/ partidos/ galeria/ reglamento/ importar/
+│   │       ├── equipos/ jugadores/ partidos/ galeria/ reglamento/ importar/ temporadas/
 │   └── api/                      → endpoints de escritura (ver sección dedicada)
 │
 ├── components/                   → Nav, Footer, PageHeader, EmptyState, EquiposGrid, admin/*
@@ -71,8 +72,12 @@ Navegador (/admin/)  ──escritura─▶ app/api/*  ──▶ Supabase (servic
 │
 ├── supabase/
 │   ├── schema.sql                → esquema completo, para un proyecto Supabase nuevo
-│   ├── migracion-2-reglamento.sql→ migración histórica ya aplicada
-│   └── seed-prueba.sql           → datos de prueba (ver sección dedicada)
+│   ├── migracion-2-reglamento.sql→ migración histórica (ver nota abajo)
+│   ├── migracion-3-seguridad.sql → migración histórica ya aplicada
+│   ├── migracion-4-advisors.sql  → migración histórica ya aplicada
+│   ├── migracion-5-temporadas.sql→ migración histórica ya aplicada
+│   ├── seed-prueba.sql           → datos de prueba (ver sección dedicada)
+│   └── seed-temporada-anterior.sql → segunda temporada chica, para probar el cambio de activa
 ├── public/robots.txt             → bloquea /admin/ en buscadores
 ├── netlify.toml                  → runtime de Next.js + cabeceras de /admin/
 └── package.json
@@ -113,7 +118,9 @@ npm run build     # build de producción, igual al que corre Netlify
 
 ## Datos de prueba (seeder)
 
-`supabase/seed-prueba.sql` carga datos ficticios pero completos para poder ver el sitio funcionando de punta a punta antes de que el admin cargue algo real: 16 equipos, 80 jugadores (5 por equipo), 3 jornadas ya jugadas con goleadores (para que Posiciones y Goleadores tengan algo que mostrar) y 1 jornada programada (para ver el Calendario). Las fechas son relativas a "hoy", así que siempre se ven vigentes sin importar cuándo lo corras.
+`supabase/seed-prueba.sql` carga datos ficticios pero completos para poder ver el sitio funcionando de punta a punta antes de que el admin cargue algo real: crea una temporada ("Temporada 2026", activa) con 16 equipos, 240 jugadores (15 por equipo), 3 jornadas ya jugadas con goleadores (para que Posiciones y Goleadores tengan algo que mostrar) y 1 jornada programada (para ver el Calendario). Las fechas son relativas a "hoy", así que siempre se ven vigentes sin importar cuándo lo corras.
+
+Para probar específicamente el cambio de temporada activa (sin tocar los datos de arriba), corré después `supabase/seed-temporada-anterior.sql` — agrega una segunda temporada chica y archivada ("Temporada 2025 (archivada)", 4 equipos, 12 jugadores, 2 partidos) para verificar desde Admin → Temporadas que activar una y otra cambia lo que se ve en el sitio sin borrar nada.
 
 Cómo usarlo:
 
@@ -145,6 +152,7 @@ Todo se administra desde `/admin/` (login con el email/contraseña creados en el
 | Subir fotos de un partido/actividad | Admin → Galería |
 | Editar los requisitos o el reglamento | Admin → Reglamento |
 | Cargar muchos equipos/jugadores de una | Admin → Importar (subís un .xlsx con hojas "Equipos" y/o "Jugadores", ver instrucciones en esa misma página) |
+| Arrancar una temporada nueva / archivar la actual | Admin → Temporadas → crear la nueva → "Marcar como activa". Lo que ya cargaste no se borra, solo deja de mostrarse en el sitio público y en el resto del panel |
 
 Las páginas públicas (Posiciones, Goleadores, tabla de Equipos) **se calculan solas**: la tabla de posiciones sale de los partidos jugados, los goleadores salen de los goles cargados en cada partido. No hay que tocar nada a mano ahí.
 
@@ -170,19 +178,29 @@ Todos requieren sesión y se llaman desde el admin con el token de Supabase en e
 | `guardar-contenido` | Guarda el texto de Requisitos / Reglamento |
 | `subir-foto` | Sube una foto a la galería pública (tabla `imagenes`) |
 | `subir-archivo` | Sube un archivo genérico (foto de jugador, logo de equipo) y devuelve la URL |
-| `importar-datos` | Carga masiva de equipos/jugadores (usada por Admin → Importar) |
-| `eliminar-equipo` / `eliminar-jugador` / `eliminar-partido` / `eliminar-foto` | Borran por id |
+| `importar-datos` | Carga masiva de equipos/jugadores (usada por Admin → Importar), siempre en la temporada activa |
+| `guardar-temporada` | Crea/renombra una temporada |
+| `activar-temporada` | Marca una temporada como activa (desactiva automáticamente cualquier otra) |
+| `eliminar-equipo` / `eliminar-jugador` / `eliminar-partido` / `eliminar-foto` / `eliminar-temporada` | Borran por id |
 
 ## Base de datos (`supabase/schema.sql`)
 
-Tablas: `equipos`, `jugadores`, `partidos` (incluye informe de árbitro), `goles` (detalle por jugador, alimenta la tabla de goleadores), `imagenes` (galería), `contenido_paginas` (Requisitos/Reglamento).
+Tablas: `temporadas` (contenedor de cada torneo/año, con una marcada `activa`), `equipos` y `partidos` e `imagenes` (cada una con `temporada_id`), `jugadores` (hereda la temporada de su equipo vía `equipo_id`), `goles` (hereda vía `partido_id`), `contenido_paginas` (Requisitos/Reglamento, global — no depende de la temporada).
 
-Vistas (hacen los cálculos, el frontend solo las lee):
+Vistas (hacen los cálculos, el frontend solo las lee, y ya filtran solas por la temporada activa vía un `join temporadas ... where activa`):
 - `v_posiciones` — PJ/PG/PE/PP/GF/GC/DG/Pts por equipo, ya ordenada.
 - `v_goleadores` — goles totales por jugador.
 - `v_proximos_partidos` — partidos con estado "Programado", con nombres de equipo resueltos.
 
 No hay tabla de roles de administrador — los usuarios de Supabase Auth ya cumplen esa función, todos con el mismo nivel de acceso.
+
+### Temporadas
+
+Cada temporada es un contenedor completo (sus propios equipos/jugadores/partidos/goles). Solo una está `activa` a la vez — el sitio público, el dashboard y las pantallas de Equipos/Jugadores/Partidos/Actividades del admin solo muestran/operan sobre esa. Las demás quedan archivadas en la base (nada se borra) hasta que se activan de nuevo desde Admin → Temporadas. Reglas a tener en cuenta si se toca este código:
+
+- `temporada_id` se resuelve **siempre server-side** en `app/api/*` (nunca se confía en lo que mande el cliente).
+- Al **crear** un equipo/partido/foto se le asigna la temporada activa en ese momento. Al **editar** uno existente, su `temporada_id` nunca se toca (evita que arreglar un typo en un equipo archivado lo "mueva" a la temporada actual).
+- Un mismo nombre de equipo puede repetirse entre temporadas (`unique(nombre, temporada_id)` en vez de `unique(nombre)`).
 
 ## Troubleshooting
 

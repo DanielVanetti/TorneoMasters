@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { llamarFuncion, fileToBase64 } from "@/lib/admin-client";
+import { llamarFuncion, fileToBase64, getTemporadaActivaId } from "@/lib/admin-client";
 import Mensaje from "@/components/admin/Mensaje";
 import { panelCls, labelCls, inputCls, btnCls, btnSecondaryCls, btnDangerCls, btnSmallSecondaryCls, formRowCls, tableCls, thCls, tdCls } from "@/lib/admin-ui";
 
@@ -32,7 +32,12 @@ export default function EquiposAdminPage() {
 
   async function cargarEquipos() {
     const supabase = createClient();
-    const { data, error } = await supabase.from("equipos").select("*").order("nombre");
+    const temporadaActivaId = await getTemporadaActivaId();
+    const { data, error } = await supabase
+      .from("equipos")
+      .select("*")
+      .eq("temporada_id", temporadaActivaId)
+      .order("nombre");
     if (error) {
       setMensaje({ texto: `Error cargando equipos: ${error.message}`, tipo: "error" });
       return;

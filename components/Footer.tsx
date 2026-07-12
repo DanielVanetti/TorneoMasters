@@ -24,7 +24,7 @@ export default function Footer() {
               <a
                 key={r}
                 href="#"
-                className="w-[38px] h-[38px] rounded-full bg-tms-gold/15 border border-tms-gold/40 flex items-center justify-center text-tms-gold font-body font-extrabold text-[13px] no-underline"
+                className="w-[38px] h-[38px] rounded-full bg-tms-gold/15 border border-tms-gold/40 flex items-center justify-center text-tms-gold font-body font-extrabold text-[13px] no-underline transition-colors duration-200 ease-out hover:bg-tms-gold/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-gold/70 focus-visible:ring-offset-2 focus-visible:ring-offset-tms-teal-dark motion-reduce:transition-none"
               >
                 {r}
               </a>
@@ -32,8 +32,17 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="border-t border-tms-cream/15 px-7 py-4 text-center text-[13px] text-tms-cream/55">
-        © 2026 Torneo Máster Santa Cruz — nombre provisional. Datos de jornada actualizados semanalmente.
+      <div className="border-t border-tms-cream/15 px-7 py-4 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3 text-center text-[13px] text-tms-cream/55">
+        <span>© 2026 Torneo Máster Santa Cruz — nombre provisional. Datos de jornada actualizados semanalmente.</span>
+        <span className="hidden sm:inline text-tms-cream/25">·</span>
+        <a
+          href="https://www.knotfix.com/en"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-tms-cream/55 hover:text-tms-gold transition-colors duration-200 ease-out underline decoration-tms-cream/25 hover:decoration-tms-gold underline-offset-2"
+        >
+          Desarrollado por KnotFix
+        </a>
       </div>
     </footer>
   );

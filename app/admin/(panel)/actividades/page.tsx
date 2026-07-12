@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { llamarFuncion, fileToBase64 } from "@/lib/admin-client";
+import { llamarFuncion, fileToBase64, getTemporadaActivaId } from "@/lib/admin-client";
 import Mensaje from "@/components/admin/Mensaje";
 import { panelCls, labelCls, inputCls, btnCls, btnDangerCls } from "@/lib/admin-ui";
 
@@ -21,9 +21,11 @@ export default function ActividadesAdminPage() {
 
   async function cargarPartidos() {
     const supabase = createClient();
+    const temporadaActivaId = await getTemporadaActivaId();
     const { data } = await supabase
       .from("partidos")
       .select("id, jornada, fecha, local:equipo_local_id(nombre), visitante:equipo_visitante_id(nombre)")
+      .eq("temporada_id", temporadaActivaId)
       .order("fecha", { ascending: false })
       .limit(60);
     setPartidos((data as unknown as Partido[]) || []);
@@ -31,7 +33,12 @@ export default function ActividadesAdminPage() {
 
   async function cargarFotos() {
     const supabase = createClient();
-    const { data, error } = await supabase.from("imagenes").select("*").order("subida_en", { ascending: false });
+    const temporadaActivaId = await getTemporadaActivaId();
+    const { data, error } = await supabase
+      .from("imagenes")
+      .select("*")
+      .eq("temporada_id", temporadaActivaId)
+      .order("subida_en", { ascending: false });
     if (error) {
       setMensaje({ texto: `Error: ${error.message}`, tipo: "error" });
       return;

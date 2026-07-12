@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { llamarFuncion, fileToBase64 } from "@/lib/admin-client";
+import { llamarFuncion, fileToBase64, getTemporadaActivaId } from "@/lib/admin-client";
 import Mensaje from "@/components/admin/Mensaje";
 import { panelCls, labelCls, inputCls, btnCls, btnSecondaryCls, btnDangerCls, btnSmallSecondaryCls, formRowCls, tableCls, thCls, tdCls } from "@/lib/admin-ui";
 
@@ -34,13 +34,23 @@ export default function JugadoresAdminPage() {
 
   async function cargarEquipos() {
     const supabase = createClient();
-    const { data, error } = await supabase.from("equipos").select("id, nombre").order("nombre");
+    const temporadaActivaId = await getTemporadaActivaId();
+    const { data, error } = await supabase
+      .from("equipos")
+      .select("id, nombre")
+      .eq("temporada_id", temporadaActivaId)
+      .order("nombre");
     if (!error) setEquipos(data || []);
   }
 
   async function cargarJugadores() {
     const supabase = createClient();
-    let query = supabase.from("jugadores").select("*, equipos(nombre)").order("nombre");
+    const temporadaActivaId = await getTemporadaActivaId();
+    let query = supabase
+      .from("jugadores")
+      .select("*, equipos!inner(nombre, temporada_id)")
+      .eq("equipos.temporada_id", temporadaActivaId)
+      .order("nombre");
     if (filtroEquipo) query = query.eq("equipo_id", filtroEquipo);
     const { data, error } = await query;
     if (error) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { llamarFuncion } from "@/lib/admin-client";
+import { llamarFuncion, getTemporadaActivaId } from "@/lib/admin-client";
 import Mensaje from "@/components/admin/Mensaje";
 import { panelCls, labelCls, inputCls, btnCls, btnSecondaryCls, btnDangerCls, btnSmallSecondaryCls, formRowCls, tableCls, thCls, tdCls } from "@/lib/admin-ui";
 
@@ -55,15 +55,22 @@ export default function PartidosAdminPage() {
 
   async function cargarEquipos() {
     const supabase = createClient();
-    const { data, error } = await supabase.from("equipos").select("id, nombre").order("nombre");
+    const temporadaActivaId = await getTemporadaActivaId();
+    const { data, error } = await supabase
+      .from("equipos")
+      .select("id, nombre")
+      .eq("temporada_id", temporadaActivaId)
+      .order("nombre");
     if (!error) setEquipos(data || []);
   }
 
   async function cargarPartidos() {
     const supabase = createClient();
+    const temporadaActivaId = await getTemporadaActivaId();
     const { data, error } = await supabase
       .from("partidos")
       .select("*, local:equipo_local_id(nombre), visitante:equipo_visitante_id(nombre)")
+      .eq("temporada_id", temporadaActivaId)
       .order("fecha", { ascending: false });
     if (error) {
       setMensaje({ texto: `Error: ${error.message}`, tipo: "error" });

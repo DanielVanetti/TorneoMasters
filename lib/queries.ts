@@ -1,9 +1,25 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/public";
 import { formatFecha, formatHora } from "@/lib/format";
 
 // Puerto de js/supabase-client.js — mismas vistas/tablas, misma forma de
 // dato de salida, ahora llamado desde Server Components en vez de un
 // fetch en el navegador después de montar la página.
+
+// v_posiciones/v_goleadores/v_proximos_partidos ya filtran por la
+// temporada activa dentro de la vista (join a "temporadas"), así que no
+// necesitan tocar este helper. jugadores/imagenes no tienen vista propia
+// y se filtran acá — cache() dedupea la consulta si varias funciones la
+// piden dentro del mismo render de Server Components.
+export const getTemporadaActivaId = cache(async (): Promise<string | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("temporadas").select("id").eq("activa", true).maybeSingle();
+  if (error) {
+    console.error("getTemporadaActivaId:", error.message);
+    return null;
+  }
+  return data?.id ?? null;
+});
 
 export type Equipo = {
   id: string;
@@ -106,9 +122,11 @@ export type Jugador = {
 
 export async function getJugadores(): Promise<Jugador[]> {
   const supabase = await createClient();
+  const temporadaActivaId = await getTemporadaActivaId();
   const { data, error } = await supabase
     .from("jugadores")
-    .select("id, nombre, numero, posicion, equipo_id, foto_url");
+    .select("id, nombre, numero, posicion, equipo_id, foto_url, equipos!inner(temporada_id)")
+    .eq("equipos.temporada_id", temporadaActivaId);
   if (error) {
     console.error("getJugadores:", error.message);
     return [];
@@ -155,11 +173,13 @@ export type GrupoActividades = {
 // como un carrusel propio en la página pública de Actividades.
 export async function getActividades(): Promise<GrupoActividades[]> {
   const supabase = await createClient();
+  const temporadaActivaId = await getTemporadaActivaId();
   const { data, error } = await supabase
     .from("imagenes")
     .select(
       "id, titulo, descripcion, url_imagen, subida_en, partido_id, partidos(jornada, fecha, equipo_local:equipo_local_id(nombre), equipo_visitante:equipo_visitante_id(nombre))"
     )
+    .eq("temporada_id", temporadaActivaId)
     .order("subida_en", { ascending: false });
   if (error) {
     console.error("getActividades:", error.message);

@@ -31,8 +31,9 @@ export default function EquiposGrid({
       return next;
     });
     if (scroll) {
+      const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       requestAnimationFrame(() => {
-        document.getElementById(`roster-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById(`roster-${id}`)?.scrollIntoView({ behavior: reducirMovimiento ? "auto" : "smooth", block: "start" });
       });
     }
   }
@@ -45,7 +46,7 @@ export default function EquiposGrid({
             key={t.id}
             type="button"
             onClick={() => toggle(t.id, true)}
-            className="text-left no-underline bg-white rounded-[10px] overflow-hidden shadow-[0_4px_14px_rgba(0,0,0,0.07)] block border-0 p-0 cursor-pointer"
+            className="text-left no-underline bg-white rounded-[10px] overflow-hidden shadow-[0_4px_14px_rgba(0,0,0,0.07)] block border-0 p-0 cursor-pointer transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-teal/50 motion-reduce:transition-none motion-reduce:hover:scale-100"
           >
             <div className="h-1.5" style={{ background: t.color || "#0E5C6B" }} />
             <div className="p-4.5 flex flex-col items-center text-center gap-2.5">
@@ -81,7 +82,7 @@ export default function EquiposGrid({
                 type="button"
                 onClick={() => toggle(t.id, false)}
                 disabled={!interactive}
-                className="w-full flex items-center gap-3 px-5 py-3.5 flex-wrap border-0 text-left cursor-pointer"
+                className="w-full flex items-center gap-3 px-5 py-3.5 flex-wrap border-0 text-left cursor-pointer transition-[filter] duration-150 ease-out hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-inset motion-reduce:transition-none"
                 style={{ background: t.color || "#0E5C6B" }}
               >
                 <span className="w-[34px] h-[34px] rounded-full bg-white/25 flex items-center justify-center font-display text-white text-[13px]">
@@ -90,12 +91,12 @@ export default function EquiposGrid({
                 <span className="font-display text-white text-lg sm:text-[19px] tracking-wide">{t.name}</span>
                 <span className="sm:ml-auto font-body text-white/85 text-[13px]">{t.city}</span>
                 {interactive && (
-                  <span className={`font-body text-white text-lg transition-transform ${abierto ? "rotate-180" : ""}`}>⌄</span>
+                  <span className={`font-body text-white text-lg transition-transform duration-200 ease-out motion-reduce:transition-none ${abierto ? "rotate-180" : ""}`}>⌄</span>
                 )}
               </button>
               {abierto &&
                 (roster.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 animate-fade-in">
                     {roster.map((p) => (
                       <div key={p.id} className="flex flex-col items-center text-center gap-2 py-4.5 px-2.5 border-b sm:border-b-0 md:border-r border-tms-ink/[0.06]">
                         <div

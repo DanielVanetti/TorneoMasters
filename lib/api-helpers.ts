@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/supabase/server";
 
 // Misma forma de respuesta que usaban las Netlify Functions viejas
@@ -18,4 +18,26 @@ export function okJson(data: Record<string, unknown> = {}) {
 // el panel tampoco puede mutar datos.
 export async function requireUser() {
   return await getSessionUser();
+}
+
+// Body JSON parseado a mano en cada Route Handler porque request.json()
+// tira si el body no es JSON válido — sin este wrapper, un body corrupto
+// devuelve la página de error 500 genérica de Next en vez de {ok:false}.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function parseJsonBody<T = Record<string, any>>(
+  request: NextRequest
+): Promise<T | null> {
+  try {
+    return (await request.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+// Loguea el error real de Supabase/Postgres en el servidor (para debug) y
+// devuelve al cliente un mensaje genérico — evita filtrar nombres de
+// tablas/columnas/constraints en la respuesta HTTP.
+export function dbErrorJson(contexto: string, error: { message: string }, mensaje = "No se pudo guardar. Intentá de nuevo.") {
+  console.error(`${contexto}:`, error.message);
+  return errorJson([mensaje], 500);
 }

@@ -31,6 +31,15 @@ export async function llamarFuncion(nombre: string, body: Record<string, unknown
   return json;
 }
 
+// Id de la temporada activa, para que las pantallas de Equipos/Jugadores/
+// Partidos solo trabajen con la temporada en curso (las archivadas no
+// deben aparecer en el día a día del admin).
+export async function getTemporadaActivaId(): Promise<string | null> {
+  const supabase = createClient();
+  const { data } = await supabase.from("temporadas").select("id").eq("activa", true).maybeSingle();
+  return data?.id ?? null;
+}
+
 export function fileToBase64(file: File): Promise<{ base64: string; contentType: string; filename: string }> {
   return new Promise((resolve, reject) => {
     if (file.size > MAX_FOTO_MB * 1024 * 1024) {

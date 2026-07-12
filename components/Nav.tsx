@@ -33,7 +33,9 @@ export default function Nav({ current }: { current: string }) {
               <Link
                 key={item.key}
                 href={item.href}
-                className="rounded-md no-underline font-bold text-[12.5px] sm:text-sm tracking-wide uppercase whitespace-nowrap px-3 py-2 sm:px-3.5 sm:py-2.5"
+                className={`rounded-md no-underline font-bold text-[12.5px] sm:text-sm tracking-wide uppercase whitespace-nowrap px-3 py-2 sm:px-3.5 sm:py-2.5 transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-gold/70 focus-visible:ring-offset-2 focus-visible:ring-offset-tms-teal-dark motion-reduce:transition-none ${
+                  active ? "" : "hover:bg-white/10"
+                }`}
                 style={active ? { background: "#F2C94C", color: "#3A2408" } : { color: "#FAF3E9" }}
               >
                 {item.label}

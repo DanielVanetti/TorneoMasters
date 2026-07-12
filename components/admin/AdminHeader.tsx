@@ -12,6 +12,7 @@ const ITEMS = [
   { key: "actividades", label: "Actividades", href: "/admin/actividades" },
   { key: "reglamento", label: "Reglamento", href: "/admin/reglamento" },
   { key: "importar", label: "Importar", href: "/admin/importar" },
+  { key: "temporadas", label: "Temporadas", href: "/admin/temporadas" },
 ];
 
 export default function AdminHeader() {
@@ -36,8 +37,8 @@ export default function AdminHeader() {
             <Link
               key={item.key}
               href={item.href}
-              className={`no-underline font-bold text-[13.5px] uppercase tracking-wide px-3 py-2 rounded-md ${
-                active ? "bg-tms-gold text-[#3A2408]" : "text-tms-cream/85"
+              className={`no-underline font-bold text-[13.5px] uppercase tracking-wide px-3 py-2 rounded-md transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-gold/70 focus-visible:ring-offset-2 focus-visible:ring-offset-tms-teal-dark motion-reduce:transition-none ${
+                active ? "bg-tms-gold text-[#3A2408]" : "text-tms-cream/85 hover:bg-white/10"
               }`}
             >
               {item.label}
@@ -47,7 +48,7 @@ export default function AdminHeader() {
       </nav>
       <button
         onClick={logout}
-        className="bg-transparent border border-tms-cream/50 text-tms-cream px-3.5 py-2 rounded-md font-bold text-[13px] uppercase cursor-pointer"
+        className="bg-transparent border border-tms-cream/50 text-tms-cream px-3.5 py-2 rounded-md font-bold text-[13px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-gold/70 focus-visible:ring-offset-2 focus-visible:ring-offset-tms-teal-dark motion-reduce:transition-none"
       >
         Salir
       </button>

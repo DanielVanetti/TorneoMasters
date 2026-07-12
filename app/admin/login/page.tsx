@@ -47,7 +47,7 @@ export default function LoginPage() {
             autoComplete="username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2.5 border border-tms-ink/[0.18] rounded-md text-[15px]"
+            className="w-full px-3 py-2.5 border border-tms-ink/[0.18] rounded-md text-[15px] transition-shadow duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-tms-teal/40 focus:border-tms-teal motion-reduce:transition-none"
           />
           <label htmlFor="password" className="block font-bold text-[13px] uppercase tracking-wide text-tms-ink/65 mt-3.5 mb-1.5">
             Contraseña
@@ -59,13 +59,16 @@ export default function LoginPage() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2.5 border border-tms-ink/[0.18] rounded-md text-[15px]"
+            className="w-full px-3 py-2.5 border border-tms-ink/[0.18] rounded-md text-[15px] transition-shadow duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-tms-teal/40 focus:border-tms-teal motion-reduce:transition-none"
           />
           <button
             type="submit"
             disabled={cargando}
-            className="w-full mt-4.5 bg-tms-orange text-white border-0 px-5.5 py-3 rounded-md font-body font-extrabold text-[15px] uppercase cursor-pointer disabled:opacity-60"
+            className="w-full mt-4.5 bg-tms-orange text-white border-0 px-5.5 py-3 rounded-md font-body font-extrabold text-[15px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-tms-orange/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-orange/50 focus-visible:ring-offset-2 disabled:opacity-60 motion-reduce:transition-none flex items-center justify-center gap-2"
           >
+            {cargando && (
+              <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin motion-reduce:hidden" aria-hidden="true" />
+            )}
             {cargando ? "Ingresando…" : "Iniciar sesión"}
           </button>
         </form>
