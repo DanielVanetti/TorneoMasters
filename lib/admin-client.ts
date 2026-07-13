@@ -2,6 +2,12 @@ import { createClient } from "@/lib/supabase/client";
 
 const MAX_FOTO_MB = 6;
 
+// Se tira específicamente cuando fetch() no llega a completar la conexión
+// (sin internet, DNS, timeout) — a diferencia de un 400/500, que sí es una
+// respuesta real del servidor. Los llamadores que quieren ofrecer guardado
+// offline (ver lib/offline-queue.ts) distinguen este caso del resto.
+export class ErrorDeRed extends Error {}
+
 // Llama a un endpoint app/api/* adjuntando el token de sesión — equivalente
 // a admin-common.js: llamarFuncion().
 export async function llamarFuncion(nombre: string, body: Record<string, unknown> = {}) {
@@ -11,14 +17,19 @@ export async function llamarFuncion(nombre: string, body: Record<string, unknown
     window.location.href = "/admin/login";
     throw new Error("Sin sesión");
   }
-  const res = await fetch(`/api/${nombre}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${data.session.access_token}`,
-    },
-    body: JSON.stringify(body || {}),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`/api/${nombre}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${data.session.access_token}`,
+      },
+      body: JSON.stringify(body || {}),
+    });
+  } catch {
+    throw new ErrorDeRed("Sin conexión a internet.");
+  }
   let json: { ok: boolean; errores?: string[]; [key: string]: unknown };
   try {
     json = await res.json();

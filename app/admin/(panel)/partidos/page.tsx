@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { llamarFuncion, getTemporadaActivaId } from "@/lib/admin-client";
+import { llamarFuncion, getTemporadaActivaId, ErrorDeRed } from "@/lib/admin-client";
+import { guardarPartidoOffline } from "@/lib/offline-queue";
 import Mensaje from "@/components/admin/Mensaje";
 import { panelCls, labelCls, inputCls, btnCls, btnSecondaryCls, btnDangerCls, btnSmallSecondaryCls, formRowCls, tableCls, thCls, tdCls } from "@/lib/admin-ui";
 
@@ -82,6 +83,11 @@ export default function PartidosAdminPage() {
   useEffect(() => {
     cargarEquipos();
     cargarPartidos();
+    // El banner de PendientesPartidos (en el layout del admin) sincroniza
+    // los partidos guardados sin conexión y avisa acá para refrescar la
+    // lista si el admin ya estaba parado en esta pantalla.
+    window.addEventListener("tms:partidos-sincronizados", cargarPartidos);
+    return () => window.removeEventListener("tms:partidos-sincronizados", cargarPartidos);
   }, []);
 
   async function cargarJugadoresDeEquipos(localId: string, visitanteId: string) {
@@ -174,27 +180,37 @@ export default function PartidosAdminPage() {
       return;
     }
     setGuardando(true);
+    const payload = {
+      id: form.id || undefined,
+      jornada: Number(form.jornada),
+      estado: form.estado,
+      fecha: form.fecha,
+      hora: form.hora || null,
+      cancha: form.cancha,
+      equipo_local_id: form.equipo_local_id,
+      equipo_visitante_id: form.equipo_visitante_id,
+      goles_local: form.goles_local === "" ? null : Number(form.goles_local),
+      goles_visitante: form.goles_visitante === "" ? null : Number(form.goles_visitante),
+      arbitro_nombre: form.arbitro_nombre,
+      informe_arbitro: form.informe_arbitro,
+      incidencias: form.incidencias,
+      goles: goles.filter((g) => g.jugador_id && g.cantidad > 0),
+    };
     try {
-      await llamarFuncion("guardar-partido", {
-        id: form.id || undefined,
-        jornada: Number(form.jornada),
-        estado: form.estado,
-        fecha: form.fecha,
-        hora: form.hora || null,
-        cancha: form.cancha,
-        equipo_local_id: form.equipo_local_id,
-        equipo_visitante_id: form.equipo_visitante_id,
-        goles_local: form.goles_local === "" ? null : Number(form.goles_local),
-        goles_visitante: form.goles_visitante === "" ? null : Number(form.goles_visitante),
-        arbitro_nombre: form.arbitro_nombre,
-        informe_arbitro: form.informe_arbitro,
-        incidencias: form.incidencias,
-        goles: goles.filter((g) => g.jugador_id && g.cantidad > 0),
-      });
+      await llamarFuncion("guardar-partido", payload);
       setMensaje({ texto: "Partido guardado correctamente.", tipo: "ok" });
       limpiarForm();
       cargarPartidos();
     } catch (err) {
+      if (err instanceof ErrorDeRed) {
+        guardarPartidoOffline(payload);
+        setMensaje({
+          texto: "Sin conexión: el partido quedó guardado en este celular y se va a enviar solo apenas vuelva la señal.",
+          tipo: "ok",
+        });
+        limpiarForm();
+        return;
+      }
       setMensaje({ texto: err instanceof Error ? err.message : String(err), tipo: "error" });
     } finally {
       setGuardando(false);
