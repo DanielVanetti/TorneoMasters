@@ -241,13 +241,15 @@ export default function JugadoresAdminPage() {
                   <td className={tdCls}>{j.equipos?.nombre || ""}</td>
                   <td className={tdCls}>{j.numero ?? ""}</td>
                   <td className={tdCls}>{j.posicion || ""}</td>
-                  <td className={`${tdCls} whitespace-nowrap`}>
-                    <button className={`${btnSmallSecondaryCls} mr-1.5`} onClick={() => editar(j)}>
-                      Editar
-                    </button>
-                    <button className={btnDangerCls} onClick={() => eliminar(j)}>
-                      Eliminar
-                    </button>
+                  <td className={tdCls}>
+                    <div className="flex flex-wrap gap-2">
+                      <button className={btnSmallSecondaryCls} onClick={() => editar(j)}>
+                        Editar
+                      </button>
+                      <button className={btnDangerCls} onClick={() => eliminar(j)}>
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

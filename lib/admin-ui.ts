@@ -7,10 +7,13 @@ export const inputCls =
 export const btnCls =
   "inline-block bg-tms-orange text-white border-0 px-5.5 py-3 rounded-md font-body font-extrabold text-[15px] uppercase tracking-wide cursor-pointer mt-4.5 transition-colors duration-200 ease-out hover:bg-tms-orange/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-orange/50 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-default motion-reduce:transition-none";
 export const btnSecondaryCls = btnCls.replace(/bg-tms-orange/g, "bg-tms-teal").replace("ring-tms-orange/50", "ring-tms-teal/50");
+// py-2.5 (en vez de py-1.5) para que la zona táctil ronde los ~40px —
+// estos botones se usan parados en la cancha, con el dedo, en pares
+// "Editar"/"Eliminar" uno al lado del otro.
 export const btnDangerCls =
-  "bg-tms-brick text-white border-0 px-3.5 py-1.5 rounded-md font-body font-bold text-[12.5px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-tms-brick/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-brick/50 focus-visible:ring-offset-2 motion-reduce:transition-none";
+  "bg-tms-brick text-white border-0 px-3.5 py-2.5 rounded-md font-body font-bold text-[12.5px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-tms-brick/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-brick/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-default motion-reduce:transition-none";
 export const btnSmallSecondaryCls =
-  "bg-tms-teal text-white border-0 px-3.5 py-1.5 rounded-md font-body font-bold text-[12.5px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-tms-teal/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-teal/50 focus-visible:ring-offset-2 motion-reduce:transition-none";
+  "bg-tms-teal text-white border-0 px-3.5 py-2.5 rounded-md font-body font-bold text-[12.5px] uppercase cursor-pointer transition-colors duration-200 ease-out hover:bg-tms-teal/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tms-teal/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-default motion-reduce:transition-none";
 export const formRowCls = "grid grid-cols-1 sm:grid-cols-2 gap-4";
 export const tableCls = "w-full border-collapse text-[14.5px]";
 export const thCls = "p-2.5 text-left bg-tms-teal/[0.08] text-tms-teal-dark text-[12.5px] uppercase tracking-wide";

@@ -204,13 +204,15 @@ export default function EquiposAdminPage() {
                   </td>
                   <td className={tdCls}>{e.ciudad || ""}</td>
                   <td className={tdCls}>{e.delegado || ""}</td>
-                  <td className={`${tdCls} whitespace-nowrap`}>
-                    <button className={`${btnSmallSecondaryCls} mr-1.5`} onClick={() => editar(e)}>
-                      Editar
-                    </button>
-                    <button className={btnDangerCls} onClick={() => eliminar(e)}>
-                      Eliminar
-                    </button>
+                  <td className={tdCls}>
+                    <div className="flex flex-wrap gap-2">
+                      <button className={btnSmallSecondaryCls} onClick={() => editar(e)}>
+                        Editar
+                      </button>
+                      <button className={btnDangerCls} onClick={() => eliminar(e)}>
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

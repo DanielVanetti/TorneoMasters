@@ -148,16 +148,18 @@ export default function TemporadasAdminPage() {
                       "Archivada"
                     )}
                   </td>
-                  <td className={`${tdCls} whitespace-nowrap`}>
-                    <button className={`${btnSmallSecondaryCls} mr-1.5`} disabled={t.activa} onClick={() => activar(t)}>
-                      Marcar como activa
-                    </button>
-                    <button className={`${btnSmallSecondaryCls} mr-1.5`} onClick={() => editar(t)}>
-                      Editar
-                    </button>
-                    <button className={btnDangerCls} disabled={t.activa} onClick={() => eliminar(t)}>
-                      Eliminar
-                    </button>
+                  <td className={tdCls}>
+                    <div className="flex flex-wrap gap-2">
+                      <button className={btnSmallSecondaryCls} disabled={t.activa} onClick={() => activar(t)}>
+                        Marcar como activa
+                      </button>
+                      <button className={btnSmallSecondaryCls} onClick={() => editar(t)}>
+                        Editar
+                      </button>
+                      <button className={btnDangerCls} disabled={t.activa} onClick={() => eliminar(t)}>
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

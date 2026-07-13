@@ -310,12 +310,15 @@ export default function PartidosAdminPage() {
           <label className={labelCls}>Incidencias (tarjetas, expulsiones, otros)</label>
           <textarea className={`${inputCls} min-h-[70px]`} value={form.incidencias} onChange={(e) => setForm({ ...form, incidencias: e.target.value })} />
 
-          <div className="flex gap-2.5">
-            <button type="submit" disabled={guardando} className={btnCls}>
+          {/* sticky en mobile: el formulario es largo (goleadores, informe,
+              incidencias) y sin esto había que scrollear todo de vuelta
+              para llegar al botón de guardar parado en la cancha */}
+          <div className="flex gap-2.5 sticky bottom-0 bg-white/95 backdrop-blur-sm py-3 -mx-5.5 px-5.5 sm:static sm:bg-transparent sm:backdrop-blur-none sm:py-0 sm:mx-0 sm:px-0">
+            <button type="submit" disabled={guardando} className={`${btnCls} mt-0!`}>
               {guardando ? "Guardando…" : "Guardar partido"}
             </button>
             {form.id && (
-              <button type="button" className={btnSecondaryCls} onClick={limpiarForm}>
+              <button type="button" className={`${btnSecondaryCls} mt-0!`} onClick={limpiarForm}>
                 Cancelar edición
               </button>
             )}
@@ -357,13 +360,15 @@ export default function PartidosAdminPage() {
                   </td>
                   <td className={tdCls}>{p.estado === "Jugado" ? `${p.goles_local} - ${p.goles_visitante}` : "—"}</td>
                   <td className={tdCls}>{p.estado}</td>
-                  <td className={`${tdCls} whitespace-nowrap`}>
-                    <button className={`${btnSmallSecondaryCls} mr-1.5`} onClick={() => editar(p)}>
-                      Editar
-                    </button>
-                    <button className={btnDangerCls} onClick={() => eliminar(p)}>
-                      Eliminar
-                    </button>
+                  <td className={tdCls}>
+                    <div className="flex flex-wrap gap-2">
+                      <button className={btnSmallSecondaryCls} onClick={() => editar(p)}>
+                        Editar
+                      </button>
+                      <button className={btnDangerCls} onClick={() => eliminar(p)}>
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
